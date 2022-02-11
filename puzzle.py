@@ -20,27 +20,13 @@ class Puzzle:
             )
         self.board = l
 
-    def from_string(self, s, delim=""):
+    def from_string(self, s, row_delim="", col_delim=""):
         s = s.strip()
+        s = s if row_delim == "" else s.replace(row_delim, "")
+        s = s if col_delim == "" else s.replace(col_delim, "")
         if len(s) != self.size**2:
-            raise BoardError(
-                f"Line length ({len(s)}) must match board size ({self.size**2})"
-            )
-        s = s if delim == "" else s.replace(delim, "")
+            raise BoardError(f"Expected {self.size**2} puzzle cells, got {len(s)}")
         self.board = [int(x) if x in self.str_nums else self.empty_char for x in s]
-
-    def from_square_csv(self, path, delim=","):
-        with open(path, "r") as f:
-            csv = f.readlines()
-            if len(csv) != self.size:
-                raise BoardError(f"CSV height must match board size ({self.size})")
-            for r in range(self.size):
-                line = line if delim == "" else csv[r].replace(delim, "")
-                if len(line) != self.size:
-                    raise BoardError(f"CSV width must match board size ({self.size})")
-                self.board[r] = [
-                    int(x) if x in self.str_nums else self.empty_char for x in line
-                ]
 
     def as_string(self, board=None, row_delim="", col_delim=""):
         board = self.board if board is None else board

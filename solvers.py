@@ -21,6 +21,20 @@ class Solver:
             and not self.puzzle.num_in_square(row, col, x, board)
         ]
 
+    def presolve(self):
+        # make the search problem easier, if possible, by repeatedly filling in
+        # any cells we immediately know the answer to
+        while True:
+            made_changes = False
+            for r in range(self.puzzle.size):
+                for c in range(self.puzzle.size):
+                    guess = self.possibilities_for_cell(r, c, self.puzzle.board)
+                    if guess is not None and len(guess) == 1:
+                        self.puzzle.set_cell(r, c, guess[0])
+                        made_changes = True
+            if not made_changes:
+                break
+
     def solve(self):
         raise NotImplementedError
 
@@ -51,19 +65,19 @@ class RecursiveNaiveSolver(Solver):
         self.verbose = verbose
         self.guesses = [None] * self.puzzle.size**2
 
-    def get_guesses(self, row, col):
+    def get_guess(self, row, col):
         return self.guesses[row * self.puzzle.size + col]
 
-    def set_guesses(self, row, col, guesses):
+    def set_guess(self, row, col, guesses):
         self.guesses[row * self.puzzle.size + col] = guesses
 
     def find_all_guesses(self, board):
         for r in range(self.puzzle.size):
             for c in range(self.puzzle.size):
-                guesses = self.possibilities_for_cell(r, c, board)
-                if guesses is not None and len(guesses) == 0:
+                guess = self.possibilities_for_cell(r, c, board)
+                if guess is not None and len(guess) == 0:
                     raise BadSolutionException
-                self.set_guesses(r, c, guesses)
+                self.set_guess(r, c, guess)
 
     def solve_recursive(self, board):
         try:
@@ -103,4 +117,5 @@ class RecursiveNaiveSolver(Solver):
             return False
 
     def solve(self):
+        self.presolve()
         return self.solve_recursive(self.puzzle.board)

@@ -1,20 +1,49 @@
 import glob
+import argparse
 from puzzle import Puzzle
-from solvers import RecursiveNaiveSolver
+import solvers
 
 
 if __name__ == "__main__":
-    test_dir = "tests"
-    test_files = [
-        f for f in glob.glob(f"{test_dir}/*.*") if not f.startswith(f"{test_dir}/.")
-    ]
-    test_files.sort()
+    # list of available solvers
+    solver_names = [x for x in dir(solvers) if "Solver" in x and x != "Solver"]
 
-    for f in test_files:
-        with open(f, "r") as fp:
-            for i, line in enumerate(fp.readlines()):
-                print(f"Testing file {f} [puzzle {i}]...")
-                puzzle = Puzzle()
-                puzzle.from_string(line)
-                solver = RecursiveNaiveSolver(puzzle, verbose=True)
-                solver.run()
+    parser = argparse.ArgumentParser(description="Solve a Sudoku puzzle")
+    parser.add_argument(
+        "input_files",
+        nargs="+",
+        help="The puzzle to solve (default format: one puzzle (81 characters) per "
+        "line, with numbers for given cells and any other character for empty cells)",
+    )
+    parser.add_argument(
+        "-s",
+        default="RecursiveNaiveSolver",
+        help="The solver to use",
+        choices=solver_names,
+    )
+    parser.add_argument(
+        "--pd", default="\n", help="Puzzle delimiter (default: newline)"
+    )
+    parser.add_argument(
+        "--rd", default="", help="Row delimiter (default: empty string)"
+    )
+    parser.add_argument(
+        "--cd", default="", help="Column delimiter (default: empty string)"
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", help="Print each step of the solution"
+    )
+
+    a = parser.parse_args()
+
+    for path in a.input_files:
+        with open(path, "r") as f:
+            contents = f.read()
+        puzzles = contents.split(a.pd)
+        for i, puzzle_str in enumerate(puzzles):
+            print(f"Testing file {path} [puzzle {i}]...")
+            puzzle = Puzzle()
+            puzzle.from_string(puzzle_str, row_delim=a.rd, col_delim=a.cd)
+            solver_args = "puzzle, verbose=a.verbose"
+            solver = eval("solvers." + a.s + f"({solver_args})")  # unsafe but who cares
+            solver.run()
