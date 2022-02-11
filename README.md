@@ -4,6 +4,12 @@ A basic implementation of a generic 9x9 Sudoku puzzle, with helper functions and
 
 ## Testing
 
+Run the solver with default options using
+
+```bash
+python3 main.py puzzles/*.*
+```
+
 Specify a solver to use with `-s` and pass in any number of unsolved puzzle files through standard input. Puzzle files can take a variety of formats, but must have consistent and distinct row delimiters (specified with `--rd`), column delimiters (specified with `--cd`), and puzzle delimiters (specified with `--pd`).
 
 Default input file is of the following format (one puzzle, 81 characters, per line, with numbers for given cells and any other character, like `.`, for empty cells).
