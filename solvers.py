@@ -10,10 +10,9 @@ class Solver:
 
     def possibilities_for_cell(self, row, col, board):
         # return a list of possible values for a cell
-        # if the cell is already solved, return an empty list
+        # if the cell is already solved, return None
         if self.puzzle.get_cell(row, col, board) != self.puzzle.empty_char:
-            raise CellSolvedException
-        # if the cell is not solved, return a list of possible values
+            return None
         return [
             x
             for x in self.puzzle.nums
@@ -32,17 +31,19 @@ class Solver:
 
         try:
             elapsed = self.solve_info["end_time"] - self.solve_info["start_time"]
-            print(f"Time taken: {round(elapsed, 3)}")
+            # print(f"Time taken: {round(elapsed, 3)}")
         except KeyError:
             pass
 
         if solution:
-            print("Solution found:")
+            # print("Solution found:")
             self.puzzle.from_list(solution)
-            print(self.puzzle)
-            self.puzzle.check_board_solved()
+            # print(self.puzzle)
+            if self.puzzle.check_board_solved():
+                print(self.puzzle)
         else:
-            print("No solution found.\n")
+            # print("No solution found.\n")
+            pass
 
 
 class RecursiveNaiveSolver(Solver):
@@ -60,12 +61,8 @@ class RecursiveNaiveSolver(Solver):
     def find_all_guesses(self, board):
         for r in range(self.puzzle.size):
             for c in range(self.puzzle.size):
-                try:
-                    guesses = self.possibilities_for_cell(r, c, board)
-                except CellSolvedException:
-                    self.set_guesses(r, c, None)
-                    continue
-                if len(guesses) == 0:
+                guesses = self.possibilities_for_cell(r, c, board)
+                if guesses is not None and len(guesses) == 0:
                     raise BadSolutionException
                 self.set_guesses(r, c, guesses)
 
