@@ -7,7 +7,7 @@ A basic implementation of a generic 9x9 Sudoku puzzle, with helper functions and
 Run the solver with default options using
 
 ```bash
-python3 main.py puzzles/*.*
+python3 solve.py puzzles/*.*
 ```
 
 Specify a solver to use with `-s` and pass in any number of unsolved puzzle files through standard input. Puzzle files can take a variety of formats, but must have consistent and distinct row delimiters (specified with `--rd`), column delimiters (specified with `--cd`), and puzzle delimiters (specified with `--pd`).
