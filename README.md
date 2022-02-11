@@ -20,6 +20,10 @@ Default input file is of the following format (one puzzle, 81 characters, per li
 3.7.4...........918........4.....7.....16.......25..........38..9....5...2.6.....
 ```
 
+## Puzzle sources
+
+- [[source](https://github.com/t-dillon/tdoku/blob/master/benchmarks/README.md)] tdoku list of benchmarked data sets
+
 ## Known Issues
 
 - `RecursiveNaiveSolver` occasionally makes a mistake on one of the `topn87` puzzles.
