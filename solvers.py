@@ -31,19 +31,18 @@ class Solver:
 
         try:
             elapsed = self.solve_info["end_time"] - self.solve_info["start_time"]
-            # print(f"Time taken: {round(elapsed, 3)}")
+            print(f"Time taken: {round(elapsed, 3)} seconds")
         except KeyError:
             pass
 
         if solution:
-            # print("Solution found:")
+            print("Solution found:")
             self.puzzle.from_list(solution)
-            # print(self.puzzle)
-            if self.puzzle.check_board_solved():
-                print(self.puzzle)
+            print(self.puzzle)
+            self.puzzle.check_board_solved()
         else:
-            # print("No solution found.\n")
-            pass
+            print("No solution found.")
+        print()
 
 
 class RecursiveNaiveSolver(Solver):
@@ -73,29 +72,35 @@ class RecursiveNaiveSolver(Solver):
             return False
 
         new_board = deepcopy(board)
-        min_guess_loc, min_guess_len = None, self.puzzle.size
+        best_guess, best_guess_loc, best_guess_len = None, None, self.puzzle.size
 
         for r in range(self.puzzle.size):
             for c in range(self.puzzle.size):
-                guesses = self.get_guesses(r, c)
-                if guesses is None:
-                    continue  # cell already solved
-                n_guesses = len(guesses)
-                if n_guesses == 1:
-                    self.puzzle.set_cell(r, c, guesses[0], new_board)
-                elif n_guesses < min_guess_len:
-                    min_guess_loc = r, c
-                    min_guess_len = n_guesses
+                guess = self.possibilities_for_cell(r, c, new_board)
+                if guess is None:  # cell already solved
+                    continue
+                n_choices = len(guess)
+                if n_choices == 1:  # answer trivial
+                    self.puzzle.set_cell(r, c, guess[0], new_board)
+                elif n_choices < best_guess_len:
+                    best_guess = guess
+                    best_guess_loc = r, c
+                    best_guess_len = n_choices
+                    if best_guess_len == 2:
+                        break  # can't improve on this
 
-        if min_guess_loc is None:
+        if best_guess_loc is None:
             return new_board  # solved the board
         else:
-            r, c = min_guess_loc
-            guess = self.get_guesses(r, c)[0]
-            self.puzzle.set_cell(r, c, guess, new_board)
-            if self.verbose:
-                print(self.puzzle.as_string(new_board))
-            return self.solve_recursive(new_board)
+            r, c = best_guess_loc
+            for g in best_guess:
+                self.puzzle.set_cell(r, c, g, new_board)
+                if self.verbose:
+                    print(self.puzzle.as_string(new_board))
+                solution = self.solve_recursive(new_board)
+                if solution:
+                    return solution
+            return False
 
     def solve(self):
         return self.solve_recursive(self.puzzle.board)

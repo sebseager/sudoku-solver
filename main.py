@@ -13,8 +13,8 @@ if __name__ == "__main__":
     for f in test_files:
         with open(f, "r") as fp:
             for i, line in enumerate(fp.readlines()):
-                # print(f"Testing file {f} [puzzle {i}]...")
+                print(f"Testing file {f} [puzzle {i}]...")
                 puzzle = Puzzle()
                 puzzle.from_string(line)
-                solver = RecursiveNaiveSolver(puzzle, verbose=False)
+                solver = RecursiveNaiveSolver(puzzle, verbose=True)
                 solver.run()

@@ -122,5 +122,5 @@ class Puzzle:
                 if not self.is_component_solved(square):
                     print(f"mistake in sqr {r * self.square_size + c}: {square}")
                     return False
-        print("solution is correct!\n")
+        print("solution is correct!")
         return True
