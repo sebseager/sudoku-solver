@@ -108,16 +108,19 @@ class Puzzle:
         print("Checking solution... ", end="")
         # check each row, column, and square
         for i in range(self.size):
-            if not self.is_component_solved(self.get_row(i)):
-                print("mistake in row", i)
+            row = self.get_row(i)
+            if not self.is_component_solved(row):
+                print(f"mistake in row {i}: {row}")
                 return False
-            if not self.is_component_solved(self.get_col(i)):
-                print("mistake in column", i)
+            col = self.get_col(i)
+            if not self.is_component_solved(col):
+                print(f"mistake in col {i}: {col}")
                 return False
-        for r in range(self.size, step=self.square_size):
-            for c in range(self.size, step=self.square_size):
-                if not self.is_component_solved(self.get_square(r, c)):
-                    print("Mistake in square", i)
+        for r in range(self.square_size):
+            for c in range(self.square_size):
+                square = self.get_square(r * self.square_size, c * self.square_size)
+                if not self.is_component_solved(square):
+                    print(f"mistake in sqr {r * self.square_size + c}: {square}")
                     return False
         print("solution is correct!\n")
         return True
